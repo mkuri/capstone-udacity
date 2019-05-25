@@ -3,7 +3,6 @@ from styx_msgs.msg import TrafficLight
 import numpy as np
 import tensorflow as tf
 import cv2
-import matplotlib.pyplot as plt
 
 VALID_SCORE = 0.3
 ID_CLASS_TL = 10
@@ -54,7 +53,7 @@ class TLClassifier(object):
                 idx_light = i
 
         if max_score < VALID_SCORE:
-            return None
+            return np.array([0])
 
         box = boxes[idx_light]
         height = cv_image.shape[0]
@@ -66,6 +65,9 @@ class TLClassifier(object):
         return image_light
 
     def classify_light_state(self, image_light):
+        if len(image_light.shape) == 1:
+            return TrafficLight.UNKNOWN
+
         hsv_img = cv2.cvtColor(image_light, cv2.COLOR_BGR2HSV)
         h = hsv_img[:, :, 0]
         s = hsv_img[:, :, 1]
@@ -78,17 +80,17 @@ class TLClassifier(object):
         red = np.zeros(h.shape, dtype=np.uint8)
         red[((h < 30/360*256) | (h > 300/360*256)) & (s > 100)] = 1
         n_red = np.count_nonzero(red)
-        print('n_red:', n_red)
+        # print('n_red:', n_red)
 
         yellow = np.zeros(h.shape, dtype=np.uint8)
-        yellow[((40/360*256 < h) & (h < 80/360*256)) & (s > 100)] = 1
+        yellow[((40/360*256 < h) & (h < 70/360*256)) & (s > 100)] = 1
         n_yellow = np.count_nonzero(yellow)
-        print('n_yellow:', n_yellow)
+        # print('n_yellow:', n_yellow)
 
         green = np.zeros(h.shape, dtype=np.uint8)
-        green[((120/360*256 < h) & (h < 260/360*256)) & (s > 100)] = 1
+        green[((80/360*256 < h) & (h < 260/360*256)) & (s > 100)] = 1
         n_green = np.count_nonzero(green)
-        print('n_green:', n_green)
+        # print('n_green:', n_green)
 
         if (n_red > n_yellow) and (n_red > n_green) and (n_red > threshould):
             return TrafficLight.RED
@@ -120,6 +122,6 @@ if __name__ == "__main__":
     model_name = 'ssd_mobilenet_v2_coco_2018_03_29'
     classifier = TLClassifier(model_name)
 
-    cv_image = cv2.imread('imgs/0.jpg')
+    cv_image = cv2.imread('imgs2/28.jpg')
     # classifier.detect_light(cv_image)
     state = classifier.get_classification(cv_image)

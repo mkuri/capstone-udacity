@@ -15,7 +15,7 @@ import numpy as np
 from scipy.spatial import KDTree
 
 STATE_COUNT_THRESHOLD = 3
-ENABLE_CLASSIFIER = False
+ENABLE_CLASSIFIER = True
 
 class TLDetector(object):
     def __init__(self):
