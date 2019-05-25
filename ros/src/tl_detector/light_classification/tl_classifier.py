@@ -62,8 +62,6 @@ class TLClassifier(object):
 
         bbox = np.array([box[0]*height, box[1]*width, box[2]*height, box[3]*width]).astype(int)
         image_light = cv_image[bbox[0]:bbox[2], bbox[1]:bbox[3]]
-        plt.imshow(image_light)
-        plt.show()
 
         return image_light
 
@@ -76,12 +74,6 @@ class TLClassifier(object):
         width = image_light.shape[1]
         n_pixels = height * width
         threshould = n_pixels / 20
-
-        plt.hist(h, bins=10)
-        plt.show()
-
-        plt.hist(s, bins=10)
-        plt.show()
 
         red = np.zeros(h.shape, dtype=np.uint8)
         red[((h < 30/360*256) | (h > 300/360*256)) & (s > 100)] = 1
