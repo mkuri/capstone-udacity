@@ -1,5 +1,25 @@
 This is the project repo for the final project of the Udacity Self-Driving Car Nanodegree: Programming a Real Self-Driving Car. For more information about the project, see the project introduction [here](https://classroom.udacity.com/nanodegrees/nd013/parts/6047fe34-d93c-4f50-8336-b70ef10cb4b2/modules/e1a23b06-329a-4684-a717-ad476f0d8dff/lessons/462c933d-9f24-42d3-8bdc-a08a5fc866e4/concepts/5ab4b122-83e6-436d-850f-9f4d26627fd9).
 
+### Architecture
+![architecture](./imgs/final-project-ros-graph-v2_800.png)
+
+### Nodes
+#### Waypoint Updater Node
+- Publish the 20 waypoints from the current position based on /base_waypoints
+- If Traffic Light Detection Node sends /traffic_waypoint, decrease the target vehicle velocity as the waypoint to stop approaches
+
+#### DBW Node
+- Calculate the accelerator command using PID controller by the deviation of the target velocity and the current velocity
+- Calculate the steering angle using the yaw controller by the target linear velocity and the target angular velocity and the vehicle specifications
+- When the target velocity is zero or less than the current velocity, calculate the brake torque not to exceed the maximum deceleration
+
+#### Traffic Light Detection Node
+- Detect the position of the signal on the camera image using Mobilenet SSD model trained with the COCO dataset
+- Convert the detected traffic light image into hsv color space and judge the state of the signal on the condition that the hue of red, green and yellow is included more than the threshold pixels
+- If the state is red, publish the waypoint 2 points before stop line positions as the stop target point to Waypoint Updater Node
+
+### Installation
+
 Please use **one** of the two installation options, either native **or** docker installation.
 
 ### Native Installation
